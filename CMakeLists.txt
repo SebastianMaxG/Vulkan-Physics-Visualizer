@@ -24,6 +24,7 @@ find_package(Vulkan REQUIRED)
 # Include Directories
 include_directories(${Vulkan_INCLUDE_DIRS})
 
+include_directories("lib/tiny_obj_loader")
 add_subdirectory(src)
 
 # If using validation layers, copy the required JSON files (optional)

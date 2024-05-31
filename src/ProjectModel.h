@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <memory>
 
 namespace lsmf
 {
@@ -17,6 +18,9 @@ namespace lsmf
 		{
 			glm::vec3 position;
 			glm::vec3 color;
+			glm::vec3 normal;
+			glm::vec2 texCoord;
+
 
 			static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
 			static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
@@ -26,6 +30,8 @@ namespace lsmf
 		{
 			std::vector<Vertex> vertices;
 			std::vector<uint32_t> indices;
+
+			void LoadModel(const std::string &filepath);
 		};
 
 
@@ -35,6 +41,8 @@ namespace lsmf
 
 		ProjectModel(const ProjectModel&) = delete;
 		ProjectModel& operator=(const ProjectModel&) = delete;
+
+		static std::unique_ptr<ProjectModel> CreateModelFromFile(ProjectDevice& device, const std::string& filepath);
 
 		void Bind(VkCommandBuffer commandBuffer);
 		void Draw(VkCommandBuffer commandBuffer);
