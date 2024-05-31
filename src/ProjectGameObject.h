@@ -12,15 +12,12 @@ namespace lsmf
 		glm::vec3 scale{ 1.f, 1.f ,1.f};
 		glm::vec3 rotation{ };
 
-		glm::mat4 mat4() const
-		{
-			auto transform = glm::translate(glm::mat4{ 1.f }, translation);
-			transform = glm::rotate(transform, rotation.y, { 0.f, 1.f, 0.f });
-			transform = glm::rotate(transform, rotation.x, { 1.f, 0.f, 0.f });
-			transform = glm::rotate(transform, rotation.z, { 0.f, 0.f, 1.f });
-			transform = glm::scale(transform, scale);
-			return transform;
-		}
+		glm::mat4 mat4() const;
+
+		glm::mat3 normalMatrix() const;
+	private:
+		mutable glm::mat4 m_TransformMatrix{ 1.f };
+		
 	};
 
 

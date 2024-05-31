@@ -12,7 +12,7 @@ namespace lsmf
 	struct SimplePushConstantData
 	{
 		glm::mat4 transform{ 1.f };
-		alignas(16) glm::vec3 color;
+		glm::mat4 normalMatrix{ 1.f };
 	};
 
 	SimpleRenderSystem::SimpleRenderSystem(ProjectDevice& device, VkRenderPass renderPass)
@@ -77,8 +77,9 @@ namespace lsmf
 			//obj.m_Transform.rotation.x = glm::mod(obj.m_Transform.rotation.x + 0.005f, glm::two_pi<float>());
 
 			SimplePushConstantData push{};
-			push.color = obj.m_Color;
-			push.transform = projectionView * obj.m_Transform.mat4();
+			auto modelMatrix = obj.m_Transform.mat4();
+			push.transform = projectionView * modelMatrix;
+			push.normalMatrix = obj.m_Transform.normalMatrix();
 
 			vkCmdPushConstants
 			(
