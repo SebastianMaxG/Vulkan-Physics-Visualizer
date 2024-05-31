@@ -22,6 +22,7 @@ namespace lsmf
 
 		bool wasWindowResized() { return m_resized; }
 		void resetWindowResizedFlag() { m_resized = false; }
+		GLFWwindow* getWindow() { return window; }
 
 	private:
 		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);

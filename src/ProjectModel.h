@@ -22,7 +22,15 @@ namespace lsmf
 			static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
 		};
 
+		struct Builder
+		{
+			std::vector<Vertex> vertices;
+			std::vector<uint32_t> indices;
+		};
+
+
 		ProjectModel(ProjectDevice& device, const std::vector<Vertex>& vertices);
+		ProjectModel(ProjectDevice& device, const Builder &builder);
 		~ProjectModel();
 
 		ProjectModel(const ProjectModel&) = delete;
@@ -33,10 +41,17 @@ namespace lsmf
 
 	private:
 		void CreateVertexBuffers(const std::vector<Vertex>& vertices);
+		void CreateIndexBuffers(const std::vector<uint32_t>& indices);
 
 		ProjectDevice& m_device;
+
 		VkBuffer m_vertexBuffer;
 		VkDeviceMemory m_vertexBufferMemory;
 		uint32_t m_vertexCount{ 0 };
+
+		bool hasIndexBuffer{ false };
+		VkBuffer m_indexBuffer;
+		VkDeviceMemory m_indexBufferMemory;
+		uint32_t m_indexCount{ 0 };
 	};
 }

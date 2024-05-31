@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ProjectCamera.h"
 #include "ProjectPipeline.h"
 #include "ProjectDevice.h"
 #include "ProjectGameObject.h"
@@ -18,7 +19,7 @@ namespace lsmf
 		SimpleRenderSystem(const SimpleRenderSystem&) = delete;
 		SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
 
-		void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<ProjectGameObject> &gameObjects );
+		void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<ProjectGameObject> &gameObjects , const ProjectCamera &camera);
 	private:
 		void createPipelineLayout();
 		void createPipeline(VkRenderPass renderPass);
