@@ -37,10 +37,15 @@ set(SOURCES
     "ProjectWindow.h"
     "ProjectModel.cpp"
     "ProjectModel.h"
+     "ProjectGameObject.h" 
+     "ProjectRenderer.h" 
+     "ProjectRenderer.cpp" 
+     "SimpleRenderSystem.h"
+     "SimpleRenderSystem.cpp"
 )
 
 # Create the executable
-add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES} )
+add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES})
 add_dependencies(${PROJECT_NAME} Shaders)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
