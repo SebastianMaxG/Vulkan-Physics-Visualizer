@@ -40,24 +40,72 @@ namespace lsmf
 		vkDeviceWaitIdle(m_device.device());
 	}
 
+    std::unique_ptr<ProjectModel> createCubeModel(ProjectDevice& device, glm::vec3 offset)
+	{
+        std::vector<ProjectModel::Vertex> vertices{
+    // left face (white)
+    {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+    {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
+    {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+    {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+    {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+    {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+
+    // right face (yellow)
+    {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+    {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
+    {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+    {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+    {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+    {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+
+    // top face (orange, remember y axis points down)
+    {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+    {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+    {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+    {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+    {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+    {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+
+    // bottom face (red)
+    {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+    {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
+    {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+    {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+    {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+    {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+
+    // nose face (blue)
+    {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+    {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+    {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+    {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+    {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+    {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+
+    // tail face (green)
+    {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+    {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+    {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+    {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+    {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+    {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+};
+        for (auto& v : vertices) {
+            v.position += offset;
+        }
+        return std::make_unique<ProjectModel>(device, vertices);
+    }
 	void FirstApp::LoadGameObjects()
 	{
-		std::vector<ProjectModel::Vertex> vertices
-		{
-			{{0.0f, -0.5f} ,{1.f,0.f,0.f}},
-			{{0.5f, 0.5f},{0.f,1.f,0.f}},
-			{{-0.5f, 0.5f},{0.f,0.f,1.0f}}
-		};
+		const std::shared_ptr<ProjectModel> cubeModel = createCubeModel(m_device, { 0.f, 0.f, 0.f });
 
-		auto model = std::make_shared<ProjectModel>(m_device, vertices);
+        auto cube = ProjectGameObject::createGameObject();
+        cube.m_Model = cubeModel;
+        cube.m_Transform.translation = { 0.f, 0.f, .5f };
+        cube.m_Transform.scale= { 0.5f, 0.5f, 0.5f };
+        //cube.m_Color = { 0.8f, 0.3f, 0.1f };
+        m_GameObjects.push_back(std::move(cube));
 
-		auto triangle = ProjectGameObject::createGameObject();
-		triangle.m_Model = model;
-		triangle.m_Color = { 0.8f, 0.3f, 0.01f };
-		triangle.m_Transform2D.translation = { 0.2f, 0.0f };
-		triangle.m_Transform2D.scale = { 2.0f, 0.5f };
-		triangle.m_Transform2D.rotation = glm::quarter_pi<float>();
-
-		m_GameObjects.push_back(std::move(triangle));
 	}
 }

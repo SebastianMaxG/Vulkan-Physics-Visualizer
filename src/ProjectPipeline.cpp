@@ -48,7 +48,7 @@ namespace lsmf
 		configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
 		configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
 		configInfo.rasterizationInfo.lineWidth = 1.0f;
-		configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT; //VK_CULL_MODE_NONE for no backface culling
+		configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE; //VK_CULL_MODE_BACK_BIT for no backface culling
 		configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
 		configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
 

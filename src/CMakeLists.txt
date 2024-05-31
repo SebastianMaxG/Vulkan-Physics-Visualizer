@@ -45,7 +45,7 @@ set(SOURCES
 )
 
 # Create the executable
-add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES} "ProjectCamera.h" "ProjectCamera.cpp")
 add_dependencies(${PROJECT_NAME} Shaders)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)

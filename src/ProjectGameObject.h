@@ -2,21 +2,24 @@
 #include "ProjectModel.h"
 #include <memory>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace lsmf 
 {
-	struct Transform2DComponent
+	struct TransformComponent
 	{
-		glm::vec2 translation{};
-		glm::vec2 scale{ 1.f, 1.f };
-		float rotation{ 0.f };
+		glm::vec3 translation{};
+		glm::vec3 scale{ 1.f, 1.f ,1.f};
+		glm::vec3 rotation{ };
 
-		glm::mat2 mat2() const
+		glm::mat4 mat4() const
 		{
-			const float s = glm::sin(rotation);
-			const float c = glm::cos(rotation);
-			const glm::mat2 rotationMat = glm::mat2({ c, s }, { -s, c });
-			const glm::mat2 scaleMat = glm::mat2({ scale.x,0 }, { 0, scale.y });
-			return rotationMat * scaleMat;
+			auto transform = glm::translate(glm::mat4{ 1.f }, translation);
+			transform = glm::rotate(transform, rotation.y, { 0.f, 1.f, 0.f });
+			transform = glm::rotate(transform, rotation.x, { 1.f, 0.f, 0.f });
+			transform = glm::rotate(transform, rotation.z, { 0.f, 0.f, 1.f });
+			transform = glm::scale(transform, scale);
+			return transform;
 		}
 	};
 
@@ -41,7 +44,7 @@ namespace lsmf
 
 		std::shared_ptr<ProjectModel> m_Model{};
 		glm::vec3 m_Color{ 1.f, 1.f, 1.f };
-		Transform2DComponent m_Transform2D{};
+		TransformComponent m_Transform{};
 
 	private:
 			ProjectGameObject(id_t id) : m_id{ id } {}

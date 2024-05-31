@@ -11,8 +11,7 @@ namespace lsmf
 {
 	struct SimplePushConstantData
 	{
-		glm::mat2 transform{ 1.f };
-		glm::vec2 offset;
+		glm::mat4 transform{ 1.f };
 		alignas(16) glm::vec3 color;
 	};
 
@@ -72,12 +71,12 @@ namespace lsmf
 
 		for (auto& obj : gameObjects)
 		{
-			obj.m_Transform2D.rotation = glm::mod(obj.m_Transform2D.rotation + 0.001f, glm::two_pi<float>());
+			obj.m_Transform.rotation.y = glm::mod(obj.m_Transform.rotation.y + 0.01f, glm::two_pi<float>());
+			obj.m_Transform.rotation.x = glm::mod(obj.m_Transform.rotation.x + 0.005f, glm::two_pi<float>());
 
 			SimplePushConstantData push{};
-			push.offset = obj.m_Transform2D.translation;
 			push.color = obj.m_Color;
-			push.transform = obj.m_Transform2D.mat2();
+			push.transform = obj.m_Transform.mat4();
 
 			vkCmdPushConstants
 			(
