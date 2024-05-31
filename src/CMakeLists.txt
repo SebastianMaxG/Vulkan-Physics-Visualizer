@@ -46,7 +46,7 @@ set(SOURCES
     "ProjectCamera.cpp" 
     "ProjectInputController.h" 
     "ProjectInputController.cpp"
-)
+ "ProjectUtils.h")
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES} )

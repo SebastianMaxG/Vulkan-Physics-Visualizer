@@ -1,9 +1,28 @@
 #include "ProjectModel.h"
+#include "ProjectUtils.h"
 #include <cassert>
-#include <iostream>
+#include <unordered_map>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
+namespace std
+{
+	template<>
+	struct hash<lsmf::ProjectModel::Vertex>
+	{
+		size_t operator()(lsmf::ProjectModel::Vertex const& vertex) const
+		{
+			size_t seed = 0;
+			lsmf::hash_combine(seed, vertex.position, vertex.color, vertex.normal, vertex.texCoord);
+			return seed;
+		}
+	};
+	
+}
 
 namespace lsmf
 {
@@ -17,14 +36,13 @@ namespace lsmf
 
 		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str()))
 		{
-			std::cout << warn << err << std::endl;
-
 			throw std::runtime_error(warn + err);
 		}
 
 		vertices.clear();
 		indices.clear();
 
+		std::unordered_map<Vertex, uint32_t> uniqueVertices{}; // Map of unique vertices
 		for (const auto& shape : shapes)
 		{
 			for (const auto& index : shape.mesh.indices)
@@ -68,11 +86,15 @@ namespace lsmf
 					vertex.color = { 1.0f, 1.0f, 1.0f };
 				}
 
-				vertices.push_back(vertex);
-				indices.push_back(static_cast<uint32_t>(indices.size()));
+				//vertices.push_back(vertex);
+				if (uniqueVertices.count(vertex) == 0)
+				{
+					uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+					vertices.push_back(vertex);
+				}
+				indices.push_back(uniqueVertices[vertex]);
 			}
 		}
-		std::cout << "Model loaded. Vertices: " << vertices.size() << " Indices: " << indices.size() << std::endl;
 	}
 
 	ProjectModel::ProjectModel(ProjectDevice& device, const std::vector<Vertex>& vertices)
@@ -104,9 +126,6 @@ namespace lsmf
 	{
 		Builder builder;
 		builder.LoadModel(filepath);
-		std::cout << "Model loaded from file: " << filepath << std::endl;
-		std::cout << "Model has " << builder.vertices.size() << " vertices\n";
-		std::cout << "Model has " << builder.indices.size() << " indices\n";
 
 		return std::make_unique<ProjectModel>(device, builder);
 	}
