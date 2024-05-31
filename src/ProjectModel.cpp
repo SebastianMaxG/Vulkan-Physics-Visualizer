@@ -49,12 +49,22 @@ namespace lsmf
 			{
 				Vertex vertex{};
 				if (index.vertex_index >= 0)
-				vertex.position =
 				{
-					attrib.vertices[3 * index.vertex_index + 0],
-					attrib.vertices[3 * index.vertex_index + 1],
-					attrib.vertices[3 * index.vertex_index + 2]
-				};
+					vertex.position =
+					{
+						attrib.vertices[3 * index.vertex_index + 0],
+						attrib.vertices[3 * index.vertex_index + 1],
+						attrib.vertices[3 * index.vertex_index + 2]
+					};
+
+					vertex.color =
+					{
+						attrib.colors[3 * index.vertex_index + 0],
+						attrib.colors[3 * index.vertex_index + 1],
+						attrib.colors[3 * index.vertex_index + 2]
+					};
+				}
+				
 
 				if (index.normal_index >= 0)
 					vertex.normal =
@@ -71,20 +81,7 @@ namespace lsmf
 					attrib.texcoords[2 * index.texcoord_index + 1]
 				};
 
-				auto colorIndex = 3 * index.vertex_index;
-				if (colorIndex < attrib.colors.size())
-				{
-					vertex.color =
-					{
-						attrib.colors[colorIndex + 0],
-						attrib.colors[colorIndex + 1],
-						attrib.colors[colorIndex + 2]
-					};
-				}
-				else
-				{
-					vertex.color = { 1.0f, 1.0f, 1.0f };
-				}
+				
 
 				//vertices.push_back(vertex);
 				if (uniqueVertices.count(vertex) == 0)
