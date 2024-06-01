@@ -7,27 +7,27 @@ The Project Contains:
 - Bullet physics (Including extra libraries)
 
   Camera Controls:
-  W = Forward 
-  S = Back
-  A = Left
-  D = Right
+  - W = Forward 
+  - S = Back
+  - A = Left
+  - D = Right
 
-  Up = Look up
-  Down = Look down
-  Left = Rotate left
-  Right = Rotate right
+  - Up = Look up
+  - Down = Look down
+  - Left = Rotate left
+  - Right = Rotate right
 
-  Space = Up
-  Shift = Down
+  - Space = Up
+  - Shift = Down
 
   Extra:
-  Numpad + = Increase Gravity
-  Numpad - = Decrease Gravity
+  - Numpad + = Increase Gravity
+  - Numpad - = Decrease Gravity
   
-  R = Reset GameObjects
-  I = Spawn Cube
-  O = Spawn Ball
-  P = Spawn Cone
+  - R = Reset GameObjects
+  - I = Spawn Cube
+  - O = Spawn Ball
+  - P = Spawn Cone
   
-Red Vector is Gravity
-Blue Vector is Velocity
+- Red Vector is Gravity
+- Blue Vector is Velocity
