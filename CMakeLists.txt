@@ -90,4 +90,4 @@ add_subdirectory(src)
 #        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 #copy all models to the build directory
-
+file(COPY ${CMAKE_SOURCE_DIR}/models DESTINATION ${CMAKE_BINARY_DIR})
