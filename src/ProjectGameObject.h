@@ -37,6 +37,7 @@ namespace lsmf
 		
 		static ProjectGameObject createGameObject(btRigidBody* rigidBody);
 
+		~ProjectGameObject();
 
 		ProjectGameObject(const ProjectGameObject&) = delete;
 		ProjectGameObject& operator=(const ProjectGameObject&) = delete;

@@ -24,6 +24,11 @@ namespace lsmf
 		FirstApp& operator=(const FirstApp&) = delete;
 
 		void run();
+
+		void SpawnObject(std::string filename, bool isStatic = false, btVector3 pos = {});
+		void SpawnObject(std::string filename, std::string physicsFilename, bool isStatic = false, btVector3 pos = {});
+
+		void ResetGameObjects();
 	private:
 		void LoadGameObjects();
 
@@ -37,9 +42,6 @@ namespace lsmf
 		// Bullet Physics
 
 		std::unique_ptr<btDiscreteDynamicsWorld> m_DynamicsWorld;
-
-		void SpawnObject(std::string filename, bool isStatic = false, btVector3 pos = {});
-		void SpawnObject(std::string filename, std::string physicsFilename, bool isStatic = false, btVector3 pos = {});
 	};
 }
 

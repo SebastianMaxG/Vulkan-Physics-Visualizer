@@ -115,7 +115,7 @@ namespace lsmf
 			//}
 			//ImGui::End();
 
-			cameraController.updateParameters(m_window.getWindow(), m_DynamicsWorld.get());
+			cameraController.updateParameters(m_window.getWindow(), frameTime,m_DynamicsWorld.get(), this);
 			// Update the physics world
 			m_DynamicsWorld->applyGravity();
 			m_DynamicsWorld->stepSimulation(1 / 60.f, 10);
@@ -155,39 +155,6 @@ namespace lsmf
 
 	void FirstApp::LoadGameObjects()
 	{
-	//	const std::shared_ptr<ProjectModel> cubeModel = ProjectModel::CreateModelFromFile(m_device, "../models/ball.obj");
-	//	const std::shared_ptr<ProjectModel> coneModel = ProjectModel::CreateModelFromFile(m_device, "../models/cone.obj");
-
-	//	auto body = ProjectModel::CreatePhysicsFromFile("../models/ball.obj", m_DynamicsWorld.get(), false);
-
- //       auto game_object = ProjectGameObject::createGameObject(body);
- //       game_object.m_Model = cubeModel;
- //       game_object.m_Transform.translation = { 0.f, 0.f, -2.5f };
- //       game_object.m_Transform.scale= glm::vec3{1};
-	//	body->translate({ 0.f, 0.f, -2.5f });
- //       //cube.m_Color = { 0.8f, 0.3f, 0.1f };
- //       m_GameObjects.push_back(std::move(game_object));
-
-	//	auto body2 = ProjectModel::CreatePhysicsFromFile("../models/cone.obj", m_DynamicsWorld.get(), false);
-
- //       auto game_object2 = ProjectGameObject::createGameObject(body2);
-	//	game_object2.m_Model = coneModel;
-	//	game_object2.m_Transform.translation = { 0.f, 0.f, -2.5f };
-	//	game_object2.m_Transform.scale= glm::vec3{1};
-	//	body2->translate({ 0.f, -10.f, -1.0f });
- //       //cube.m_Color = { 0.8f, 0.3f, 0.1f };
- //       m_GameObjects.push_back(std::move(game_object2));
-
-	//	// add a ground plane
-	//	auto groundBody = ProjectModel::CreatePhysicsFromFile("../models/tapered_plane.obj", m_DynamicsWorld.get(), true);
-	//	const std::shared_ptr<ProjectModel> planeModel = ProjectModel::CreateModelFromFile(m_device, "../models/tapered_plane.obj");
-
-	//	groundBody->translate({ 0.f,5.f,0.f });
-	//	auto plane = ProjectGameObject::createGameObject(groundBody);
-	//	plane.m_Model = planeModel;
-	//	plane.m_Transform.scale = glm::vec3{ 1.f };
-	//	m_GameObjects.push_back(std::move(plane));
-
 		SpawnObject("../models/tapered_plane.obj", true, { 0,3.f,0 });
 		SpawnObject("../models/ball.obj", false, { 0,-5.f,2.5f });
 		SpawnObject("../models/cone.obj", false, { 4.f,-5.f,0 });
@@ -211,4 +178,17 @@ namespace lsmf
 		m_GameObjects.push_back(std::move(game_object));
 	}
 
+	void FirstApp::ResetGameObjects()
+	{
+		for (auto& object : m_GameObjects)
+		{
+			if (object.hasRigidBody())
+			{
+				m_DynamicsWorld->removeRigidBody(object.getRigidBody());
+			}
+		}
+		vkDeviceWaitIdle(m_device.device());
+		m_GameObjects.clear();
+		LoadGameObjects();
+	}
 }

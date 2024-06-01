@@ -26,6 +26,10 @@ namespace lsmf
 		return ProjectGameObject{ currentId++ , rigidBody};
 	}
 
+	ProjectGameObject::~ProjectGameObject()
+	{
+	}
+
 	void ProjectGameObject::Update()
 	{
 		if (!m_HasRigidBody)

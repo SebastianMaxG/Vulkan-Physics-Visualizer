@@ -1,4 +1,5 @@
 #include "ProjectInputController.h"
+#include "FirstApp.h"
 
 namespace lsmf
 {
@@ -36,13 +37,13 @@ namespace lsmf
 			gameObject.m_Transform.translation += glm::normalize(move) * moveSpeed * deltaTime;
 		}
 	}
-	void ProjectInputController::updateParameters(GLFWwindow* window, btDiscreteDynamicsWorld* world)
+	void ProjectInputController::updateParameters(GLFWwindow* window, float deltaTime, btDiscreteDynamicsWorld* world, FirstApp* app)
 	{
 		bool dirty = false;
 		if (glfwGetKey(window, keys.gravUp) == GLFW_PRESS)
 		{
 			btVector3 gravity = world->getGravity();
-			gravity.setY(gravity.getY() + 0.1f);
+			gravity.setY(gravity.getY() + gravSpeed * deltaTime);
 			world->setGravity(gravity);
 			dirty = true;
 		}
@@ -50,7 +51,7 @@ namespace lsmf
 		if (glfwGetKey(window, keys.gravDown) == GLFW_PRESS)
 		{
 			btVector3 gravity = world->getGravity();
-			gravity.setY(gravity.getY() - 0.1f);
+			gravity.setY(gravity.getY() - gravSpeed * deltaTime);
 			world->setGravity(gravity);
 			 dirty = true;
 		}
@@ -59,6 +60,34 @@ namespace lsmf
 			for (int i = 0; i < world->getNumCollisionObjects(); i++)
 			{
 				world->getCollisionObjectArray()[i]->activate();
+			}
+		}
+
+		if (glfwGetKey(window, keys.reset) == GLFW_PRESS)
+		{
+			app->ResetGameObjects();
+		}
+
+		if (spawndelay > 0)
+		{
+			spawndelay -= deltaTime;
+		}
+		else
+		{
+			if (glfwGetKey(window, keys.spawnCube) == GLFW_PRESS)
+			{
+				app->SpawnObject("../models/cube.obj", false, { 0,-5.f,-3 });
+				spawndelay = spawndelayMax;
+			}
+			if (glfwGetKey(window, keys.spawnBall) == GLFW_PRESS)
+			{
+				app->SpawnObject("../models/ball.obj", false, { 0,-5.f,2.5f });
+				spawndelay = spawndelayMax;
+			}
+			if (glfwGetKey(window, keys.spawnCone) == GLFW_PRESS)
+			{
+				app->SpawnObject("../models/cone.obj", false, { 4.f,-5.f,0 });
+				spawndelay = spawndelayMax;
 			}
 		}
 	}

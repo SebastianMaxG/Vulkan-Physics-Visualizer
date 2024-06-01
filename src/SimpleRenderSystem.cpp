@@ -139,8 +139,46 @@ namespace lsmf
 					m_VelocityVector->Bind(commandBuffer);
 					m_VelocityVector->Draw(commandBuffer);
 				}
+				auto impulse = rigidBody->getPushVelocity();
+				float impulseScale = impulse.length();
+				if (impulseScale > 0.05f)
+				{
+					TransformComponent impulseTransform;
+					impulseTransform.translation = obj.m_Transform.translation;
+					impulseTransform.scale = glm::vec3{ 1.f, impulseScale,1.f };
+					glm::vec3 directionGLM(impulse.x(), impulse.y(), impulse.z());
 
-				auto angularVelocity = rigidBody->getAngularVelocity();
+					// Normalize the direction vector
+					directionGLM = glm::normalize(directionGLM);
+
+					// Calculate the rotation angles in radians
+					float pitch = glm::acos(directionGLM.y);
+					float yaw = glm::atan(directionGLM.x, directionGLM.z);
+
+					// Convert the rotation angles to degrees
+					impulseTransform.rotation.x = pitch;
+					impulseTransform.rotation.y = yaw;
+
+
+
+					auto impulseMatrix = impulseTransform.mat4();
+					push.transform = projectionView * impulseMatrix;
+					push.normalMatrix = obj.m_Transform.normalMatrix();
+
+
+					vkCmdPushConstants
+					(
+						commandBuffer,
+						m_pipelineLayout,
+						VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+						0,
+						sizeof(SimplePushConstantData),
+						&push
+					);
+
+					m_ExtraVector->Bind(commandBuffer);
+					m_ExtraVector->Draw(commandBuffer);
+				}
 
 				auto force = rigidBody->getGravity();
 				float forceScale = force.length();

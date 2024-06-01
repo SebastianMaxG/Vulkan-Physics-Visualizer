@@ -78,3 +78,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE BulletDynamics BulletCollision Lin
 # target_link_libraries(${PROJECT_NAME} PRIVATE VHACD_LIB)
 
 # target_link_libraries(${PROJECT_NAME} PRIVATE ${hacd_SOURCE_DIR}/lib/Release/VHACD_LIB.lib)
+
+file(GLOB MODEL_FILES ${CMAKE_SOURCE_DIR}/models/*.obj)
+
+foreach(MODEL_FILE ${MODEL_FILES})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${MODEL_FILE}
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+endforeach()

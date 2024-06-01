@@ -5,6 +5,11 @@
 
 namespace lsmf
 {
+	class FirstApp;
+}
+
+namespace lsmf
+{
 	class ProjectInputController
 	{
 	public: 
@@ -43,14 +48,16 @@ namespace lsmf
 		void MoveInPlaneXZ(GLFWwindow* window, float deltaTime, ProjectGameObject &gameObject);
 
 
-		void updateParameters(GLFWwindow* window, float deltaTime, btDiscreteDynamicsWorld* world);
+		void updateParameters(GLFWwindow* window, float deltaTime, btDiscreteDynamicsWorld* world, FirstApp* app);
 
 		const KeyMappings keys{};
 
-		float moveSpeed = 6.0f;
-		float lookSpeed = 2.f;
+		float moveSpeed = 12.0f;
+		float lookSpeed = 3.f;
+		float gravSpeed = 4.f;
 
-
+		float spawndelay{};
+		const float spawndelayMax {0.5f};
 		//void handleInput(std::vector<ProjectGameObject> &gameObjects);
 		
 	};

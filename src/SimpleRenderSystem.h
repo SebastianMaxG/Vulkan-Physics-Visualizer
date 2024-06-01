@@ -32,7 +32,7 @@ namespace lsmf
 
 		const std::shared_ptr<ProjectModel> m_VelocityVector = ProjectModel::CreateModelFromFile(m_device, "../models/speedVector.obj");
 		const std::shared_ptr<ProjectModel> m_ForceVector = ProjectModel::CreateModelFromFile(m_device, "../models/forceVector.obj");
-		const std::shared_ptr<ProjectModel> m_AngularVector = ProjectModel::CreateModelFromFile(m_device, "../models/extraVector.obj");
+		const std::shared_ptr<ProjectModel> m_ExtraVector = ProjectModel::CreateModelFromFile(m_device, "../models/extraVector.obj");
 
 	};
 }
