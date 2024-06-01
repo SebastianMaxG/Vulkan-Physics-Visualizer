@@ -2,12 +2,12 @@
 #include "ProjectUtils.h"
 #include <cassert>
 #include <unordered_map>
-
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
+#include <HACD/hacdHACD.h>
 
 namespace std
 {
@@ -126,6 +126,102 @@ namespace lsmf
 
 		return std::make_unique<ProjectModel>(device, builder);
 	}
+
+	btRigidBody* ProjectModel::CreatePhysicsFromFile(const std::string& filepath, btDiscreteDynamicsWorld* world, bool isStatic)
+	{
+		Builder builder;
+		builder.LoadModel(filepath);
+
+		if (builder.vertices.empty())
+		{
+			throw std::runtime_error("Model file " + filepath + " load failed");
+		}
+
+		if (builder.indices.empty())
+		{
+			throw std::runtime_error("Model file " + filepath + " has no indices");
+		}
+
+		btCollisionShape* shape = nullptr;
+
+		if (IsMeshConcave(builder.vertices, builder.indices))
+		{
+			//// Perform concave mesh decomposition
+			HACD::HACD hacd;
+			std::vector<HACD::Vec3<HACD::Real>> points;
+			std::vector<HACD::Vec3<long>> triangles;
+
+			for (const auto& vertex : builder.vertices) {
+				points.push_back(HACD::Vec3<HACD::Real>(vertex.position.x, vertex.position.y, vertex.position.z));
+			}
+
+			for (size_t i = 0; i < builder.indices.size(); i += 3) {
+				triangles.push_back(HACD::Vec3<long>(builder.indices[i], builder.indices[i + 1], builder.indices[i + 2]));
+			}
+
+			hacd.SetPoints(&points[0]);
+			hacd.SetNPoints(points.size());
+			hacd.SetTriangles(&triangles[0]);
+			hacd.SetNTriangles(triangles.size());
+
+			hacd.Compute();
+
+			btCompoundShape* compoundShape = new btCompoundShape();
+
+			for (size_t i = 0; i < hacd.GetNClusters(); ++i) {
+				size_t nPoints = hacd.GetNPointsCH(i);
+				size_t nTriangles = hacd.GetNTrianglesCH(i);
+
+				std::vector<HACD::Vec3<HACD::Real>> pointsCH(nPoints);
+				std::vector<HACD::Vec3<long>> trianglesCH(nTriangles);
+
+				hacd.GetCH(i, &pointsCH[0], &trianglesCH[0]);
+
+				btConvexHullShape* convexHullShape = new btConvexHullShape();
+
+				for (const auto& point : pointsCH) {
+					convexHullShape->addPoint(btVector3(static_cast<float>(point.X()), static_cast<float>(point.Y()), static_cast<float>(point.Z())));
+				}
+
+				compoundShape->addChildShape(btTransform::getIdentity(), convexHullShape);
+			}
+
+			shape = compoundShape;
+		}
+		else
+		{
+			btConvexHullShape* convexHullShape = new btConvexHullShape();
+
+			for (const auto& index : builder.indices) {
+				glm::vec3 v = builder.vertices[index].position;
+				convexHullShape->addPoint(btVector3(v.x, v.y, v.z));
+			}
+
+			shape = convexHullShape;
+		}
+
+		btDefaultMotionState* motionState = new btDefaultMotionState();
+		btScalar mass = 1.0;
+		if (isStatic)
+		{
+			mass = 0.0;
+		}
+		btVector3 inertia(0, 0, 0);
+		shape->calculateLocalInertia(mass, inertia);
+		auto rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, inertia);
+
+		btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+
+		if (isStatic) {
+			world->addCollisionObject(rigidBody);
+		}
+		else {
+			world->addRigidBody(rigidBody);
+		}
+
+		return rigidBody;
+	}
+
 
 	void ProjectModel::Bind(VkCommandBuffer commandBuffer)
 	{
@@ -248,6 +344,30 @@ namespace lsmf
 		attributeDescriptions.push_back({ 2,0,VK_FORMAT_R32G32B32_SFLOAT ,offsetof(Vertex, normal) });
 		attributeDescriptions.push_back({ 3,0,VK_FORMAT_R32G32_SFLOAT	 ,offsetof(Vertex, texCoord) });
 		return  attributeDescriptions;
+	}
+
+
+	bool ProjectModel::IsMeshConcave(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) {
+		glm::vec3 center(0.0f);
+		for (const auto& vertex : vertices) {
+			center += vertex.position;
+		}
+		center /= static_cast<float>(vertices.size());
+
+		for (size_t i = 0; i < indices.size(); i += 3) {
+			glm::vec3 v0 = vertices[indices[i]].position;
+			glm::vec3 v1 = vertices[indices[i + 1]].position;
+			glm::vec3 v2 = vertices[indices[i + 2]].position;
+
+			glm::vec3 normal = glm::cross(v1 - v0, v2 - v0);
+			glm::vec3 centerToFace = v0 - center;
+
+			if (glm::dot(normal, centerToFace) < 0.0f) {
+				return true;  // The mesh is concave
+			}
+		}
+
+		return false;  // The mesh is not concave
 	}
 
 }

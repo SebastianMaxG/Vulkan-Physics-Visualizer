@@ -18,6 +18,26 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glfw)
 
+FetchContent_Declare(
+  bullet
+  GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
+  GIT_TAG        master  # or specify a version tag or commit hash
+)
+
+set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)  # Add this line
+
+FetchContent_MakeAvailable(bullet)
+
+# FetchContent_Declare(
+#   hacd
+#   GIT_REPOSITORY https://github.com/kmammou/v-hacd.git
+#   GIT_TAG        master  # or specify a version tag or commit hash
+# )
+# 
+# FetchContent_MakeAvailable(hacd)
+
+# add_subdirectory(${hacd_SOURCE_DIR} ${CMAKE_BINARY_DIR}/hacd)
+
 # Find the required packages
 find_package(Vulkan REQUIRED)
 

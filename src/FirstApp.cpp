@@ -7,17 +7,27 @@
 #include <stdexcept>
 #include <array>
 #include <chrono>
+#include <iostream>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+#include <algorithm>
+#include <execution>
 
 namespace lsmf
 {
 
 	FirstApp::FirstApp()
 	{
+		// Initialize Bullet
+		btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+		btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+		btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+		btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
+		m_DynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher, broadphase, solver, collisionConfiguration);
+
 		LoadGameObjects();
 	}
 
@@ -34,6 +44,8 @@ namespace lsmf
         auto viewerObject = ProjectGameObject::createGameObject();
         ProjectInputController cameraController{};
 
+		m_DynamicsWorld->setGravity(btVector3(0, 9.8f, 0.f));
+
         auto currentTime = std::chrono::high_resolution_clock::now();
 
 		while (!m_window.shouldClose())
@@ -45,12 +57,20 @@ namespace lsmf
             frameTime = std::min(frameTime, 0.5f);
             currentTime = newTime;
 
+			m_DynamicsWorld->applyGravity();
+			m_DynamicsWorld->stepSimulation(1 / 60.f, 10);
+
+			for (ProjectGameObject& object : m_GameObjects)
+			{
+				object.Update();
+			}
+
             cameraController.MoveInPlaneXZ(m_window.getWindow(), frameTime, viewerObject);
             camera.SetViewXYZ(viewerObject.m_Transform.translation, viewerObject.m_Transform.rotation);
 
             float aspect = m_renderer.getAspectRatio();
 
-            camera.SetPerspectiveProjection(glm::radians(50.f), m_renderer.getAspectRatio(), 0.1f, 10.f);
+            camera.SetPerspectiveProjection(glm::radians(50.f), m_renderer.getAspectRatio(), 0.1f, 100.f);
 
 			if (const auto commandBuffer = m_renderer.beginFrame())
 			{
@@ -71,12 +91,37 @@ namespace lsmf
 	{
 		const std::shared_ptr<ProjectModel> cubeModel = ProjectModel::CreateModelFromFile(m_device, "../models/smooth_vase.obj");
 
-        auto game_object = ProjectGameObject::createGameObject();
+		auto body = ProjectModel::CreatePhysicsFromFile("../models/cube.obj", m_DynamicsWorld.get(), false);
+
+        auto game_object = ProjectGameObject::createGameObject(body);
         game_object.m_Model = cubeModel;
         game_object.m_Transform.translation = { 0.f, 0.f, -2.5f };
-        game_object.m_Transform.scale= glm::vec3{3};
+        game_object.m_Transform.scale= glm::vec3{1};
+		body->translate({ 0.f, 0.f, -2.5f });
         //cube.m_Color = { 0.8f, 0.3f, 0.1f };
         m_GameObjects.push_back(std::move(game_object));
+
+		auto body2 = ProjectModel::CreatePhysicsFromFile("../models/cube.obj", m_DynamicsWorld.get(), false);
+
+        auto game_object2 = ProjectGameObject::createGameObject(body2);
+        game_object.m_Model = cubeModel;
+        game_object.m_Transform.translation = { 0.f, 0.f, -2.5f };
+        game_object.m_Transform.scale= glm::vec3{1};
+		body2->translate({ 0.f, -2.f, -2.2f });
+        //cube.m_Color = { 0.8f, 0.3f, 0.1f };
+        m_GameObjects.push_back(std::move(game_object));
+
+		// add a ground plane
+		auto groundBody = ProjectModel::CreatePhysicsFromFile("../models/plane.obj", m_DynamicsWorld.get(), true);
+		const std::shared_ptr<ProjectModel> planeModel = ProjectModel::CreateModelFromFile(m_device, "../models/plane.obj");
+
+		groundBody->translate({ 0.f,1.f,0.f });
+		auto plane = ProjectGameObject::createGameObject(groundBody);
+		plane.m_Model = planeModel;
+		plane.m_Transform.scale = glm::vec3{ 1.f };
+
+		m_GameObjects.push_back(std::move(plane));
+
 
 	}
 }

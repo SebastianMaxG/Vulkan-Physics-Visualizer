@@ -4,6 +4,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+
+#include "BulletDynamics/Dynamics/btRigidBody.h"
+
 namespace lsmf 
 {
 	struct TransformComponent
@@ -17,7 +20,7 @@ namespace lsmf
 		glm::mat3 normalMatrix() const;
 	private:
 		mutable glm::mat4 m_TransformMatrix{ 1.f };
-		
+
 	};
 
 
@@ -31,6 +34,9 @@ namespace lsmf
 			static id_t currentId = 0;
 			return ProjectGameObject{ currentId++ };
 		}
+		
+		static ProjectGameObject createGameObject(btRigidBody* rigidBody);
+
 
 		ProjectGameObject(const ProjectGameObject&) = delete;
 		ProjectGameObject& operator=(const ProjectGameObject&) = delete;
@@ -38,13 +44,21 @@ namespace lsmf
 		ProjectGameObject& operator=(ProjectGameObject&&) = default;
 
 		id_t getId() const { return m_id; }
+		void Update();
 
 		std::shared_ptr<ProjectModel> m_Model{};
 		glm::vec3 m_Color{ 1.f, 1.f, 1.f };
 		TransformComponent m_Transform{};
 
+
+		btRigidBody* getRigidBody() const { return m_RigidBody; }
 	private:
 			ProjectGameObject(id_t id) : m_id{ id } {}
+			ProjectGameObject(id_t id, btRigidBody* rigidBody);
 			id_t m_id;
+
+			btRigidBody* m_RigidBody = nullptr;
+			bool m_HasRigidBody{ false };
+			bool m_IsStatic{ false };
 	};
 }

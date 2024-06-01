@@ -1,5 +1,7 @@
 #include "ProjectGameObject.h"
 
+#include "LinearMath/btTransform.h"
+
 namespace lsmf
 {
 	glm::mat4 TransformComponent::mat4() const
@@ -16,5 +18,42 @@ namespace lsmf
 	glm::mat3 TransformComponent::normalMatrix() const
 	{
 		return glm::mat3(glm::transpose(glm::inverse(m_TransformMatrix)));
+	}
+
+	ProjectGameObject ProjectGameObject::createGameObject(btRigidBody* rigidBody)
+	{
+		static id_t currentId = 0;
+		return ProjectGameObject{ currentId++ , rigidBody};
+	}
+
+	void ProjectGameObject::Update()
+	{
+		if (!m_HasRigidBody || m_IsStatic)
+		{
+			return;
+		}
+
+		btTransform transform;
+		m_RigidBody->getMotionState()->getWorldTransform(transform);
+
+		// set the transform matrix to the calculated matrix
+		m_Transform.translation = { transform.getOrigin().getX(), transform.getOrigin().getY(), transform.getOrigin().getZ() };
+		transform.getRotation().getEulerZYX(m_Transform.rotation.z, m_Transform.rotation.y, m_Transform.rotation.x);
+		
+
+	}
+
+	ProjectGameObject::ProjectGameObject(id_t id, btRigidBody* rigidBody)
+		: m_id{ id }, m_RigidBody{ rigidBody }
+	{
+		btTransform transform = m_RigidBody->getWorldTransform();
+		if (m_RigidBody->isStaticObject())
+		{
+			m_IsStatic = true;
+		}
+		// set the transform matrix to the calculated matrix
+		m_Transform.translation = { transform.getOrigin().getX(), transform.getOrigin().getY(), transform.getOrigin().getZ() };
+		transform.getRotation().getEulerZYX(m_Transform.rotation.z, m_Transform.rotation.y, m_Transform.rotation.x);
+		m_HasRigidBody = true;
 	}
 }

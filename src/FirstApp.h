@@ -1,12 +1,14 @@
 #pragma once
 
-#include "ProjectWindow.h"
+#include <btBulletDynamicsCommon.h>
+#include <memory>
+#include <vector>
+
 #include "ProjectDevice.h"
 #include "ProjectGameObject.h"
 #include "ProjectRenderer.h"
+#include "ProjectWindow.h"
 
-#include <memory>
-#include <vector>
 
 namespace lsmf
 {
@@ -31,6 +33,9 @@ namespace lsmf
 
 		std::vector<ProjectGameObject> m_GameObjects;
 
+		// Bullet Physics
+
+		std::unique_ptr<btDiscreteDynamicsWorld> m_DynamicsWorld;
 	};
 }
 

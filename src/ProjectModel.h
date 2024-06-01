@@ -8,6 +8,9 @@
 #include <vector>
 #include <memory>
 
+#include <btBulletDynamicsCommon.h>
+
+
 namespace lsmf
 {
 
@@ -51,6 +54,7 @@ namespace lsmf
 		ProjectModel& operator=(const ProjectModel&) = delete;
 
 		static std::unique_ptr<ProjectModel> CreateModelFromFile(ProjectDevice& device, const std::string& filepath);
+		static btRigidBody* CreatePhysicsFromFile(const std::string& filepath, btDiscreteDynamicsWorld* world, bool isStatic);
 
 		void Bind(VkCommandBuffer commandBuffer);
 		void Draw(VkCommandBuffer commandBuffer);
@@ -58,6 +62,8 @@ namespace lsmf
 	private:
 		void CreateVertexBuffers(const std::vector<Vertex>& vertices);
 		void CreateIndexBuffers(const std::vector<uint32_t>& indices);
+
+		static bool IsMeshConcave(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 
 		ProjectDevice& m_device;
 

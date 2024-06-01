@@ -46,7 +46,9 @@ set(SOURCES
     "ProjectCamera.cpp" 
     "ProjectInputController.h" 
     "ProjectInputController.cpp"
- "ProjectUtils.h" "ProjectGameObject.cpp")
+    "ProjectUtils.h" 
+    "ProjectGameObject.cpp"
+    )
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES} )
@@ -57,3 +59,18 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
 # Link libraries
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${Vulkan_LIBRARIES} glfw)
+
+# Include Bullet Physics 
+target_include_directories(${PROJECT_NAME} PRIVATE ${bullet_SOURCE_DIR}/src)
+
+# Include HACD
+target_include_directories(${PROJECT_NAME} PRIVATE ${bullet_SOURCE_DIR}/Extras)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE BulletDynamics BulletCollision LinearMath HACD)
+
+# Include HACD
+# target_include_directories(${PROJECT_NAME} PRIVATE ${hacd_SOURCE_DIR}/src/VHACD_Lib/public)
+
+# target_link_libraries(${PROJECT_NAME} PRIVATE VHACD_LIB)
+
+# target_link_libraries(${PROJECT_NAME} PRIVATE ${hacd_SOURCE_DIR}/lib/Release/VHACD_LIB.lib)
