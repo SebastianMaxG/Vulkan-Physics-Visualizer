@@ -38,6 +38,42 @@ FetchContent_MakeAvailable(bullet)
 
 # add_subdirectory(${hacd_SOURCE_DIR} ${CMAKE_BINARY_DIR}/hacd)
 
+
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui.git
+  # GIT_TAG        v1.85
+)
+
+FetchContent_MakeAvailable(imgui)
+
+#set(IMGUI_SOURCE_FILES
+#    "imgui.cpp"
+#    "imgui_draw.cpp"
+#    "imgui_widgets.cpp"
+#    "imgui_tables.cpp"
+#    "imgui_demo.cpp"
+#    "backends/imgui_impl_glfw.cpp"
+#    "backends/imgui_impl_vulkan.cpp"
+#    "imgui.h"
+#    "imconfig.h"
+#    "imgui_internal.h"
+#    "imstb_rectpack.h"
+#    "imstb_textedit.h"
+#    "imstb_truetype.h"
+#    "backends/imgui_impl_glfw.h"
+#    "backends/imgui_impl_vulkan.h"
+#    )
+#
+#foreach(SOURCE IN ITEMS ${IMGUI_SOURCE_FILES})
+#    list(APPEND ABSOLUTE_IMGUI_SOURCE_FILES "${imgui_SOURCE_DIR}/${SOURCE}")
+#endforeach()
+#
+#add_library(imgui STATIC ${ABSOLUTE_IMGUI_SOURCE_FILES})
+#link_directories(${CMAKE_BINARY_DIR})
+#target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR})
+#target_link_libraries(imgui PRIVATE ${Vulkan_LIBRARIES} glfw)
+
 # Find the required packages
 find_package(Vulkan REQUIRED)
 

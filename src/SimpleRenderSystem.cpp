@@ -92,6 +92,97 @@ namespace lsmf
 			);
 			obj.m_Model->Bind(commandBuffer);
 			obj.m_Model->Draw(commandBuffer);
+
+			//Draw Physics Vectors
+			if (obj.hasRigidBody() && !obj.isStatic() )
+			{
+				auto rigidBody = obj.getRigidBody();
+
+				auto linearVelocity = rigidBody->getLinearVelocity();
+				//draw verctor for linear velocity
+				float linearScale = linearVelocity.length();
+				if (linearScale > 0.05f)
+				{
+					TransformComponent linearTransform;
+					linearTransform.translation = obj.m_Transform.translation;
+					linearTransform.scale = glm::vec3{ 1.f, linearScale,1.f };
+					glm::vec3 directionGLM(linearVelocity.x(), linearVelocity.y(), linearVelocity.z());
+
+					// Normalize the direction vector
+					directionGLM = glm::normalize(directionGLM);
+
+					// Calculate the rotation angles in radians
+					float pitch = glm::acos(directionGLM.y);
+					float yaw = glm::atan(directionGLM.x, directionGLM.z);
+
+					// Convert the rotation angles to degrees
+					linearTransform.rotation.x = pitch;
+					linearTransform.rotation.y = yaw;
+
+
+
+					auto linearMatrix = linearTransform.mat4();
+					push.transform = projectionView * linearMatrix;
+					push.normalMatrix = obj.m_Transform.normalMatrix();
+
+
+					vkCmdPushConstants
+					(
+						commandBuffer,
+						m_pipelineLayout,
+						VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+						0,
+						sizeof(SimplePushConstantData),
+						&push
+					);
+
+					m_VelocityVector->Bind(commandBuffer);
+					m_VelocityVector->Draw(commandBuffer);
+				}
+
+				auto angularVelocity = rigidBody->getAngularVelocity();
+
+				auto force = rigidBody->getGravity();
+				float forceScale = force.length();
+				if (forceScale > 0.05f)
+				{
+					TransformComponent forceTransform;
+					forceTransform.translation = obj.m_Transform.translation;
+					forceTransform.scale = glm::vec3{ 1.f, forceScale,1.f };
+					glm::vec3 directionGLM(force.x(), force.y(), force.z());
+
+					// Normalize the direction vector
+					directionGLM = glm::normalize(directionGLM);
+
+					// Calculate the rotation angles in radians
+					float pitch = glm::acos(directionGLM.y);
+					float yaw = glm::atan(directionGLM.x, directionGLM.z);
+
+					// Convert the rotation angles to degrees
+					forceTransform.rotation.x = pitch;
+					forceTransform.rotation.y = yaw;
+
+
+
+					auto forceMatrix = forceTransform.mat4();
+					push.transform = projectionView * forceMatrix;
+					push.normalMatrix = obj.m_Transform.normalMatrix();
+
+
+					vkCmdPushConstants
+					(
+						commandBuffer,
+						m_pipelineLayout,
+						VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+						0,
+						sizeof(SimplePushConstantData),
+						&push
+					);
+
+					m_ForceVector->Bind(commandBuffer);
+					m_ForceVector->Draw(commandBuffer);
+				}
+			}
 		}
 	}
 }

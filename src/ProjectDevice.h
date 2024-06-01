@@ -6,9 +6,11 @@
 #include <string>
 #include <vector>
 
-namespace lsmf {
 
-struct SwapChainSupportDetails {
+namespace lsmf {
+	class ProjectRenderer;
+
+	struct SwapChainSupportDetails {
   VkSurfaceCapabilitiesKHR capabilities;
   std::vector<VkSurfaceFormatKHR> formats;
   std::vector<VkPresentModeKHR> presentModes;

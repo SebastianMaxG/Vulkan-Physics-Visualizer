@@ -52,6 +52,11 @@ namespace lsmf
 
 
 		btRigidBody* getRigidBody() const { return m_RigidBody; }
+
+		bool isStatic() const { return m_IsStatic; }
+		bool hasRigidBody() const { return m_HasRigidBody; }
+
+			std::string m_Name{"Object"};
 	private:
 			ProjectGameObject(id_t id) : m_id{ id } {}
 			ProjectGameObject(id_t id, btRigidBody* rigidBody);
@@ -60,5 +65,7 @@ namespace lsmf
 			btRigidBody* m_RigidBody = nullptr;
 			bool m_HasRigidBody{ false };
 			bool m_IsStatic{ false };
+
+
 	};
 }

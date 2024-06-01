@@ -28,13 +28,13 @@ namespace lsmf
 
 	void ProjectGameObject::Update()
 	{
-		if (!m_HasRigidBody || m_IsStatic)
+		if (!m_HasRigidBody)
 		{
 			return;
 		}
 
-		btTransform transform;
-		m_RigidBody->getMotionState()->getWorldTransform(transform);
+
+		btTransform transform = m_RigidBody->getWorldTransform();
 
 		// set the transform matrix to the calculated matrix
 		m_Transform.translation = { transform.getOrigin().getX(), transform.getOrigin().getY(), transform.getOrigin().getZ() };

@@ -20,6 +20,17 @@ namespace lsmf
 			int lookRight = GLFW_KEY_RIGHT;
 			int lookUp = GLFW_KEY_UP;
 			int lookDown = GLFW_KEY_DOWN;
+
+			int gravUp = GLFW_KEY_KP_ADD;
+			int gravDown = GLFW_KEY_KP_SUBTRACT;
+
+			int pickup = GLFW_MOUSE_BUTTON_LEFT;
+
+			int reset	  = GLFW_KEY_R;
+			int spawnCube = GLFW_KEY_I;
+			int spawnCone = GLFW_KEY_P;
+			int spawnBall = GLFW_KEY_O;
+
 		};
 
 		ProjectInputController() = default;
@@ -31,10 +42,13 @@ namespace lsmf
 
 		void MoveInPlaneXZ(GLFWwindow* window, float deltaTime, ProjectGameObject &gameObject);
 
+
+		void updateParameters(GLFWwindow* window, float deltaTime, btDiscreteDynamicsWorld* world);
+
 		const KeyMappings keys{};
 
-		float moveSpeed = 3.0f;
-		float lookSpeed = 1.5f;
+		float moveSpeed = 6.0f;
+		float lookSpeed = 2.f;
 
 
 		//void handleInput(std::vector<ProjectGameObject> &gameObjects);

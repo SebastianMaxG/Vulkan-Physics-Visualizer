@@ -211,6 +211,8 @@ namespace lsmf
 		auto rigidBodyCI = btRigidBody::btRigidBodyConstructionInfo(mass, motionState, shape, inertia);
 
 		btRigidBody* rigidBody = new btRigidBody(rigidBodyCI);
+		//make object bouncy
+		rigidBody->setRestitution(0.8f);
 
 		if (isStatic) {
 			world->addCollisionObject(rigidBody);

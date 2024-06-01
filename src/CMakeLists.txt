@@ -68,6 +68,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${bullet_SOURCE_DIR}/Extras)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BulletDynamics BulletCollision LinearMath HACD)
 
+# Include ImGui
+
+# target_link_libraries(${PROJECT_NAME} PRIVATE imgui)
+
 # Include HACD
 # target_include_directories(${PROJECT_NAME} PRIVATE ${hacd_SOURCE_DIR}/src/VHACD_Lib/public)
 

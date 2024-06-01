@@ -15,8 +15,8 @@ namespace lsmf
 	class FirstApp
 	{
 	public:
-		static constexpr int WIDTH = 800;
-		static constexpr int HEIGHT = 600;
+		static constexpr int WIDTH = 1600;
+		static constexpr int HEIGHT = 1200;
 		FirstApp();
 		~FirstApp();
 
@@ -27,7 +27,8 @@ namespace lsmf
 	private:
 		void LoadGameObjects();
 
-		ProjectWindow m_window{ WIDTH, HEIGHT, "Vulkan" };
+
+		ProjectWindow m_window{ WIDTH, HEIGHT, "VulkanPhysicsVisualizer - Leander Flossie" };
 		ProjectDevice m_device{ m_window };
 		ProjectRenderer m_renderer{ m_window, m_device };
 
@@ -36,6 +37,9 @@ namespace lsmf
 		// Bullet Physics
 
 		std::unique_ptr<btDiscreteDynamicsWorld> m_DynamicsWorld;
+
+		void SpawnObject(std::string filename, bool isStatic = false, btVector3 pos = {});
+		void SpawnObject(std::string filename, std::string physicsFilename, bool isStatic = false, btVector3 pos = {});
 	};
 }
 

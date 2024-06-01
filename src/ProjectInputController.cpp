@@ -36,4 +36,30 @@ namespace lsmf
 			gameObject.m_Transform.translation += glm::normalize(move) * moveSpeed * deltaTime;
 		}
 	}
+	void ProjectInputController::updateParameters(GLFWwindow* window, btDiscreteDynamicsWorld* world)
+	{
+		bool dirty = false;
+		if (glfwGetKey(window, keys.gravUp) == GLFW_PRESS)
+		{
+			btVector3 gravity = world->getGravity();
+			gravity.setY(gravity.getY() + 0.1f);
+			world->setGravity(gravity);
+			dirty = true;
+		}
+
+		if (glfwGetKey(window, keys.gravDown) == GLFW_PRESS)
+		{
+			btVector3 gravity = world->getGravity();
+			gravity.setY(gravity.getY() - 0.1f);
+			world->setGravity(gravity);
+			 dirty = true;
+		}
+		if (dirty)
+		{
+			for (int i = 0; i < world->getNumCollisionObjects(); i++)
+			{
+				world->getCollisionObjectArray()[i]->activate();
+			}
+		}
+	}
 }
